@@ -4,8 +4,6 @@ import os.path
 import re
 import subprocess
 
-RE_TIMESTAMP = r"([01]?[0-9]|2[0-3]):([012345][0-9]):([012345][0-9])"
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Convert a movie to GIF with optional subtitles')
 
@@ -29,11 +27,6 @@ if __name__ == "__main__":
         print(f"ERROR: Subtitles file ({args.subtitles}) specified, but not found")
         exit(1)
 
-    if not re.match(RE_TIMESTAMP, args.timestamp):
-        print(f"ERROR: Invalid timestamp ({args.timestamp}) specified")
-        print(f"Timestamp should be HH:MM:SS")
-        exit(1)
-
     try:
         args.duration = float(args.duration)
     except ValueError:
@@ -42,19 +35,20 @@ if __name__ == "__main__":
 
     process_args = [
             "ffmpeg",
+            "-i",
+            f"\"{args.input}\"",
             "-vf",
             f"\"subtitles=\\'{args.subtitles}\\'\"",
             "-ss",
             f"{args.timestamp}",
             "-t",
             f"{args.duration}",
-            "-i",
-            f"\"{args.input}\"",
+            "-y",
             f"\"{args.output}\""
             ]
 
-    if args.subtitles != None:
-        del(process_args[1:3])
+    if args.subtitles == None:
+        del(process_args[3:5])
 
     if args.dry_run:
         print(" ".join(process_args))
