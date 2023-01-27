@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 import argparse
+import os
 import os.path
 import re
 import subprocess
@@ -54,7 +55,7 @@ if __name__ == "__main__":
         print(" ".join(process_args))
     else:
         try:
-            subprocess.run(process_args)
+            subprocess.run(process_args, cwd=os.getcwd())
         except FileNotFoundError:
             print("ERROR: ffmpeg not installed")
 
